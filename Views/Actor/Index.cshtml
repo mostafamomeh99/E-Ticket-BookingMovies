@@ -1,0 +1,27 @@
+﻿
+@foreach(var actorx in Model)
+{
+<div class="card" style="width: 50rem;">
+    <div class="d-flex mt-2">
+            <img src="~/images/cast/@actorx.ProfilePicture" class="card-img-top"
+    style="width:80px; height:80px;"
+    alt="...">
+        <p class="ms-2 card-text align-self-center fw-bold"
+               style="font-size:25px;">@actorx.FirstName @actorx.LastName </p>
+    </div>
+        <div class="card-body">
+            <p class="card-text">@actorx.Bio</p>
+        <p class="card-text text-primary fw-bold">Act at Movies :</p>
+        @foreach (var actor in ViewBag.Actor)
+        {
+            <p class="card-text ">
+                - <a href="https://localhost:7045/Home/Details?movieid=@actor.Movie.Id" class="fw-bold text-dark"
+                style="text-decoration:none;" >@actor.Movie.Name</a>
+            </p>
+        }
+        </div>
+    
+
+    
+</div>
+}

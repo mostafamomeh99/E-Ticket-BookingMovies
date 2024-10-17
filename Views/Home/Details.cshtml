@@ -1,0 +1,87 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Movie
+<div class="card mb-3" style="width: 70rem;">
+    <div class="card-header bg-dark text-light">@Model.Name</div>
+    <div class="row">
+        <div class="col-5"><img src="~/images/movies/@Model.ImgUrl" class="card-img-top" alt="..."></div>
+        <div class="col-7" style="margin-left:-25px;">
+            <div class="card-body">
+                <p class="card-title ">
+                    @Model.Description
+                </p>
+                <p class="card-title ">
+                    <span class="fw-bold"> Price : </span>
+                    <span class="bg-secondary text-light p-1" style="border-radius:10%;"> @Model.Price</span>
+                </p>
+                <p class="card-title ">
+                    <span class="fw-bold"> Cinema : </span>
+                    <a href="https://localhost:7045/Cinema/Movies?cinemaid=@Model.Cinema.Id" type="button" class="fw-bold" style="text-decoration:none"> @Model.Cinema.Name</a>
+                </p>
+                <p class="card-title ">
+                    <span class="fw-bold"> Start date : </span>
+                    <span> @Model.StartDate.ToString()</span>
+                </p>
+                <p class="card-title ">
+                    <span class="fw-bold"> End date : </span>
+                    <span> @Model.EndDate.ToString()</span>
+                </p>
+                <p class="card-title ">
+                    <span class="fw-bold"> Category : </span>
+                    <a href="https://localhost:7045/Category/Movies?categoryid=@Model.Category.Id" type="button" class="fw-bold " style="text-decoration:none"> @Model.Category.Name</a>
+                </p>
+                <p class="card-title">
+                    <span class="fw-bold "> Cast : </span>
+                    <br />
+                    @foreach(var item in Model.ActorMovies)
+                    {
+                        <a href="https://localhost:7045/Actor/Index?actorid=@item.Actor.Id" type="button" class="fw-bold mt-2 me-1" style="text-decoration:none">
+                            <img src="~/images/cast/@item.Actor.ProfilePicture" alt="Alternate Text"/>
+                           </a>
+                    }
+                </p>
+
+                @if (Model.MovieStatus == BookingMovies.Models.MovieStatus.Available)
+                {
+                    <p class="card-title mt-4">
+                        <span class="bg-primary text-light p-2" style="border-radius:7%;">Available</span>
+                    </p>
+                }
+                @if (Model.MovieStatus == BookingMovies.Models.MovieStatus.Expired)
+                {
+                    <p class="card-title mt-4">
+                        <span class="bg-danger text-light p-2" style="border-radius:7%;">Expired</span>
+                    </p>
+                }
+                @if (Model.MovieStatus == BookingMovies.Models.MovieStatus.Upcoming)
+                {
+                    <p class="card-title mt-4">
+                        <span class="bg-secondary text-light p-2" style="border-radius:7%;">UpComing</span>
+                    </p>
+                }
+
+                <p class="card-title">
+                    <span class="fw-bold "> Trailer : </span>
+                    <br />
+                    <iframe width="530" height="360" src="https://www.youtube.com/embed/@Model.TrailerUrl" allowfullscreen></iframe>
+                </p>
+
+
+
+                    @if (DateTime.Now > Model.EndDate)
+                    {
+                        <button href="#" class="btn btn-success mt-3" disabled="true">Book Tickets</button>
+                    }
+                    else
+                    {
+                    <a href="#" class="btn btn-success mt-3">Book Tickets</a>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

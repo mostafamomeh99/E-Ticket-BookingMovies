@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="row row-cols-2">
+    @foreach (var movie in Model.Movies)
+    {
+        <div class="col">
+            <div class="card mb-3" style="width: 33rem;">
+                <div class="card-header bg-dark text-light">@movie.Name</div>
+                <div class="row">
+                    <div class="col-5"><img src="~/images/movies/@movie.ImgUrl" class="card-img-top" alt="..."></div>
+                    <div class="col-7" style="margin-left:-25px;">
+                        <div class="card-body">
+                            <p class="card-title ">
+                                <span class="fw-bold"> Price : </span>
+                                <span class="bg-secondary text-light p-1" style="border-radius:10%;"> @movie.Price</span>
+                            </p>
+                            <p class="card-title ">
+                                <span class="fw-bold"> Cinema : </span>
+                                <a href=" https://localhost:7045/Cinema/Movies?cinemaid=@Model.Id" type="button" class="fw-bold" style="text-decoration:none"> @Model.Name</a>
+                            </p>
+                            <p class="card-title ">
+                                <span class="fw-bold"> Start date : </span>
+                                <span> @movie.StartDate.ToString()</span>
+                            </p>
+                            <p class="card-title ">
+                                <span class="fw-bold"> End date : </span>
+                                <span> @movie.EndDate.ToString()</span>
+                            </p>
+                            <p class="card-title ">
+                                <span class="fw-bold"> Category : </span>
+                                <a href="https://localhost:7045/Category/Movies?categoryid=@movie.Category.Id" type="button" class="fw-bold" style="text-decoration:none"> @movie.Category.Name</a>
+                            </p>
+                            @if (movie.MovieStatus == BookingMovies.Models.MovieStatus.Available)
+                            {
+                                <p class="card-title mt-3">
+                                    <span class="bg-primary text-light p-2" style="border-radius:7%;">Available</span>
+                                </p>
+                            }
+                            @if (movie.MovieStatus == BookingMovies.Models.MovieStatus.Expired)
+                            {
+                                <p class="card-title mt-3">
+                                    <span class="bg-danger text-light p-2" style="border-radius:7%;">Expired</span>
+                                </p>
+                            }
+                            @if (movie.MovieStatus == BookingMovies.Models.MovieStatus.Upcoming)
+                            {
+                                <p class="card-title mt-3">
+                                    <span class="bg-secondary text-light p-2" style="border-radius:7%;">UpComing</span>
+
+                                </p>
+                            }
+                            <div class="d-flex mt-4">
+                                <a href="https://localhost:7045/Home/Details?movieid=@movie.Id" class="btn btn-dark me-2">More Details</a>
+                                @if (DateTime.Now > movie.EndDate)
+                                {
+                                    <button href="#" class="btn btn-success" disabled="true">Book Tickets</button>
+                                }
+                                else
+                                {
+                                    <a href="#" class="btn btn-success">Book Tickets</a>
+                                }
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+
+
+
+</div>
+
+
+
