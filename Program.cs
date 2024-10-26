@@ -30,6 +30,9 @@ namespace BookingMovies
             builder.Services.AddScoped<IMovieRepository, MovieRepository>();
             builder.Services.AddScoped<ISearchServices<Movie>, MovieRepository>();
             builder.Services.AddScoped<ISearchServices<Actor>, ActorRepository>();
+            builder.Services.AddScoped<IFileServices<Actor>, ActorRepository>();
+            builder.Services.AddScoped<IFileServices<Cinema>, CinemaRepository>();
+            builder.Services.AddScoped<IFileServices<Movie>, MovieRepository>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

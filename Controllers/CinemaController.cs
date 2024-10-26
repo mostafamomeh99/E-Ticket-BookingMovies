@@ -12,32 +12,32 @@ namespace BookingMovies.Controllers
         private readonly IDataCrudRepository<Cinema> DatabaseCinema;
         private readonly ICinemaRepository CinemaRepository;
         private readonly IDataCrudRepository<Movie> DatabaseMovie;
-
+        private readonly IFileServices<Cinema> Cinemafiles;
+ 
         public CinemaController(IDataCrudRepository<Cinema> DatabaseCinema, ICinemaRepository CinemaRepository
-            , IDataCrudRepository<Movie> DatabaseMovie
+            , IDataCrudRepository<Movie> DatabaseMovie ,
+            IFileServices<Cinema> Cinemafiles
             )
         {
             this.DatabaseCinema = DatabaseCinema;
             this.CinemaRepository = CinemaRepository;
             this.DatabaseMovie = DatabaseMovie;
+            this.Cinemafiles = Cinemafiles;
         }
+
         public IActionResult Index()
         {
             var cinema = DatabaseCinema.GetAll().ToList();
-                //context.Cinemas.ToList();
-
             return View(cinema);
         }
+
 
         public IActionResult Movies(int cinemaid)
         {
             var cinema = CinemaRepository.GetCinemaAll(cinemaid).FirstOrDefault();
-
-                //context.Cinemas.Where(e => e.Id == cinemaid).Include(e => e.Movies).ThenInclude(e => e.Category)
-                //.FirstOrDefault();
-
             return View(cinema);
         }
+
 
         public IActionResult AddCinema()
         {
@@ -51,14 +51,7 @@ namespace BookingMovies.Controllers
             {
                 if (CinemaLogo != null)
                 {
-                    var filename = Guid.NewGuid().ToString() + CinemaLogo.FileName;
-                    var pathname = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\cinemas", filename);
-                    using (var stream = System.IO.File.Create(pathname))
-                    {
-                        CinemaLogo.CopyTo(stream);
-                    }
-                    cinema.CinemaLogo = filename;
-
+                    cinema.CinemaLogo = Cinemafiles.AddFile(CinemaLogo, "cinemas");
                     DatabaseCinema.Create(cinema);
                     DatabaseCinema.Commit();
                     return RedirectToAction("Index", "Home");
@@ -73,6 +66,9 @@ namespace BookingMovies.Controllers
             return View(new Cinema());
         }
 
+
+
+
         public IActionResult UpdateCinema(int id)
         {
             var cinema = DatabaseCinema.GetById(id);
@@ -85,22 +81,10 @@ namespace BookingMovies.Controllers
             var oldcinema = DatabaseCinema.GetAll().AsNoTracking().FirstOrDefault(e => e.Id == cinema.Id);
             if (ModelState.IsValid)
             {
-
-                var oldpath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\cinemas", oldcinema.CinemaLogo);
                 if (CinemaLogo != null)
                 {
-                    var filename = Guid.NewGuid().ToString() + CinemaLogo.FileName;
-                    var pathname = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\cinemas", filename);
-
-                    if (System.IO.File.Exists(oldpath))
-                    { System.IO.File.Delete(oldpath); }
-
-                    using (var stream = System.IO.File.Create(pathname))
-                    {
-                        CinemaLogo.CopyTo(stream);
-                    }
-                    cinema.CinemaLogo = filename;
-
+                    cinema.CinemaLogo = Cinemafiles.AddFile(CinemaLogo, "cinemas");
+                    Cinemafiles.DeleteFile("cinemas", oldcinema);
                     DatabaseCinema.Update(cinema);
                     DatabaseCinema.Commit();
                  
@@ -122,9 +106,7 @@ namespace BookingMovies.Controllers
         public IActionResult DeleteCinema(int id)
         {
             var cinema = DatabaseCinema.GetById(id);
-            var oldpath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\cinemas", cinema.CinemaLogo);
-            if (System.IO.File.Exists(oldpath))
-            { System.IO.File.Delete(oldpath); }
+            Cinemafiles.DeleteFile("cinemas", cinema);
             DatabaseCinema.Delete(cinema);
             DatabaseCinema.Commit();
             return RedirectToAction("Index", "Home");

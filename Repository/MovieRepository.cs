@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingMovies.Repository
 {
-    public class MovieRepository : IMovieRepository , ISearchServices<Movie>
+    public class MovieRepository : IMovieRepository , ISearchServices<Movie> , IFileServices<Movie>
     {
         private readonly ApplicationDbContext context;
 
@@ -36,6 +36,25 @@ namespace BookingMovies.Repository
                 .ToList();
 
             return result;
+        }
+
+        public string AddFile(IFormFile Picture, string file)
+        {
+            var filename = Guid.NewGuid().ToString() + Picture.FileName;
+            var pathname = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\images\\{file}", filename);
+            using (var stream = System.IO.File.Create(pathname))
+            {
+                Picture.CopyTo(stream);
+            }
+            return filename;
+        }
+        public void DeleteFile(string file, Movie movie)
+        {
+
+            var oldpath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\images\\{file}", movie.ImgUrl);
+
+            if (System.IO.File.Exists(oldpath))
+            { System.IO.File.Delete(oldpath); }
         }
 
     }

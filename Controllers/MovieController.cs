@@ -13,21 +13,22 @@ namespace BookingMovies.Controllers
         private readonly IDataCrudRepository<Movie> DatabaseMovie;
         private readonly IDataCrudRepository<Cinema> DatabaseCinema;
         private readonly IDataCrudRepository<Category> DatabaseCategory;
+        private readonly IFileServices<Movie> MovieFiles;
         public MovieController(IMovieRepository movieRepository,
             IDataCrudRepository<Movie> DatabaseMovie, IDataCrudRepository<Cinema> DatabaseCinema
-            , IDataCrudRepository<Category> DatabaseCategory
+            , IDataCrudRepository<Category> DatabaseCategory , IFileServices<Movie> MovieFiles
+
             ) {
             this.movieRepository = movieRepository;
             this.DatabaseMovie = DatabaseMovie;
             this.DatabaseCinema = DatabaseCinema;
             this.DatabaseCategory = DatabaseCategory;
+            this.MovieFiles = MovieFiles;
         }
 
 
         public IActionResult AddMovie()
         {
-            
-
             ViewBag.CategoryId = DatabaseCategory.GetAll().Select(c => new SelectListItem
             {
                 Value = c.Id.ToString(), 
@@ -42,6 +43,7 @@ namespace BookingMovies.Controllers
 
             return View(new Movie());
         }
+
         [HttpPost]
         public IActionResult AddMovie(Movie movie , IFormFile ImgUrl)
         {
@@ -50,13 +52,8 @@ namespace BookingMovies.Controllers
             {
                 if (ImgUrl !=null)
                 {
-                    var filename = Guid.NewGuid().ToString() + ImgUrl.FileName;
-                    var pathname = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\movies", filename);
-                    using (var stream = System.IO.File.Create(pathname))
-                    {
-                        ImgUrl.CopyTo(stream);
-                    }
-                    movie.ImgUrl = filename;
+                    movie.ImgUrl = MovieFiles.AddFile(ImgUrl, "movies");
+
                     if(DateTime.Now>movie.EndDate && DateTime.Now > movie.StartDate)
                     {movie.MovieStatus=BookingMovies.Models.MovieStatus.Expired; }
 
@@ -107,6 +104,7 @@ namespace BookingMovies.Controllers
 
         }
 
+
         public IActionResult UpdateMovie(int id)
         {
             var movie = DatabaseMovie.GetById(id);
@@ -139,17 +137,8 @@ namespace BookingMovies.Controllers
             {
                 if (ImgUrl != null)
                 {
-                    var filename = Guid.NewGuid().ToString() + ImgUrl.FileName;
-                    var pathname = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\movies", filename);
-                    var oldpath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\movies", oldmovie.ImgUrl);
-                    if (System.IO.File.Exists(oldpath))
-                    { System.IO.File.Delete(oldpath); }
-                    using (var stream = System.IO.File.Create(pathname))
-                    {
-                        ImgUrl.CopyTo(stream);
-                    }
-                    
-                    movie.ImgUrl = filename;
+                    movie.ImgUrl = MovieFiles.AddFile(ImgUrl, "movies");
+                    MovieFiles.DeleteFile( "movies", oldmovie);
 
                     if (DateTime.Now > movie.EndDate && DateTime.Now > movie.StartDate)
                     { movie.MovieStatus = BookingMovies.Models.MovieStatus.Expired; }
@@ -198,12 +187,12 @@ namespace BookingMovies.Controllers
                 return View(movie);
             }
         }
+
+
         public IActionResult DeleteMovie(int id)
         {
             var movie = DatabaseMovie.GetById(id);
-            var oldpath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\movies", movie.ImgUrl);
-            if (System.IO.File.Exists(oldpath))
-            { System.IO.File.Delete(oldpath); }
+            MovieFiles.DeleteFile("movies", movie);
             return RedirectToAction("Index", "Home");
         }
 
