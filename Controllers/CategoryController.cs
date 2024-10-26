@@ -1,4 +1,6 @@
 ﻿using BookingMovies.Data;
+using BookingMovies.Models;
+using BookingMovies.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,20 +8,30 @@ namespace BookingMovies.Controllers
 {
     public class CategoryController : Controller
     {
-        ApplicationDbContext context=new ApplicationDbContext();
+        private readonly IDataCrudRepository<Category> dbcategory;
+        private readonly ICategoryRepository categoryRepository;
+        public CategoryController(IDataCrudRepository<Category> Dbcategory,ICategoryRepository categoryRepository)
+        {
+            dbcategory = Dbcategory;
+           this.categoryRepository = categoryRepository;
+         
+        }
+
+       
+
         public IActionResult Index()
         {
-            var categories=context.Categories.ToList();
+            var categories=dbcategory.GetAll();
             return View(categories);
         }
 
         public IActionResult Movies(int categoryid)
         {
-            var categories = context.Categories.Where(e => e.Id == categoryid).Include(e => e.Movies).
-                ThenInclude(e=>e.Cinema)
-                .FirstOrDefault();
+            var categories = categoryRepository.GetOneCategoryAll(categoryid);
+
             return View(categories);
         }
+ 
 
     }
 }

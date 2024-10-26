@@ -1,3 +1,9 @@
+using BookingMovies.Data;
+using BookingMovies.Models;
+using BookingMovies.Repository;
+using BookingMovies.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
+
 namespace BookingMovies
 {
     public class Program
@@ -9,6 +15,21 @@ namespace BookingMovies
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddDbContext<ApplicationDbContext>(
+                   options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+                   );
+
+            builder.Services.AddScoped<IDataCrudRepository<Category>, DataCrudRepository<Category>>();
+            builder.Services.AddScoped<IDataCrudRepository<Cinema>, DataCrudRepository<Cinema>>();
+            builder.Services.AddScoped<IDataCrudRepository<Actor>, DataCrudRepository<Actor>>();
+            builder.Services.AddScoped<IDataCrudRepository<Movie>, DataCrudRepository<Movie>>();
+            builder.Services.AddScoped<IDataCrudRepository<ActorMovie>, DataCrudRepository<ActorMovie>>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
+            builder.Services.AddScoped<IActorRepository, ActorRepository>();
+            builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+            builder.Services.AddScoped<ISearchServices<Movie>, MovieRepository>();
+            builder.Services.AddScoped<ISearchServices<Actor>, ActorRepository>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

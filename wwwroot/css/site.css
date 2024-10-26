@@ -15,3 +15,8 @@ body {
     flex: 1; /* This will make the content area expand to fill available space */
 }
 
+#actorphoto{
+    width:70px !important;
+    height:70px !important;
+    border-radius:50%;
+}

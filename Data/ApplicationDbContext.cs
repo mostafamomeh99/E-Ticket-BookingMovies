@@ -10,13 +10,21 @@ namespace BookingMovies.Data
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Category> Categories { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+          : base(options)
         {
-            var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true).Build();
-
-            var connection = builder.GetConnectionString("DefaultConnection");
-            optionsBuilder.UseSqlServer(connection);
         }
+        public ApplicationDbContext()
+   : base()
+        {
+        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true).Build();
+
+        //    var connection = builder.GetConnectionString("DefaultConnection");
+        //    optionsBuilder.UseSqlServer(connection);
+        //}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ActorMovie>()

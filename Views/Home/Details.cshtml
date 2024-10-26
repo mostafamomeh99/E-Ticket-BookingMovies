@@ -37,7 +37,7 @@
                     @foreach(var item in Model.ActorMovies)
                     {
                         <a href="https://localhost:7045/Actor/Index?actorid=@item.Actor.Id" type="button" class="fw-bold mt-2 me-1" style="text-decoration:none">
-                            <img src="~/images/cast/@item.Actor.ProfilePicture" alt="Alternate Text"/>
+                            <img src="~/images/cast/@item.Actor.ProfilePicture" alt="Alternate Text" id="actorphoto" />
                            </a>
                     }
                 </p>
@@ -64,7 +64,11 @@
                 <p class="card-title">
                     <span class="fw-bold "> Trailer : </span>
                     <br />
-                    <iframe width="530" height="360" src="https://www.youtube.com/embed/@Model.TrailerUrl" allowfullscreen></iframe>
+                    <video controls="controls" autoplay muted>
+                        <source src="@Model.TrailerUrl" type="video/mp4" />
+                        <source src="@Model.TrailerUrl" type="video/webm" />
+                        <source src="@Model.TrailerUrl" type="video/ogg" />
+                       </video>
                 </p>
 
 

@@ -1,5 +1,6 @@
 using BookingMovies.Data;
 using BookingMovies.Models;
+using BookingMovies.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,27 +10,43 @@ namespace BookingMovies.Controllers
 {
     public class HomeController : Controller
     {
-        ApplicationDbContext context = new ApplicationDbContext();
+        private readonly IDataCrudRepository<Movie> DatabaseMovie;
+        private readonly IMovieRepository movieRepository;
+        private readonly IActorRepository actorRepository;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ISearchServices<Movie> searchServicesMovie;
+        private readonly ISearchServices<Actor> searchServicesActor;
+
+        public HomeController(ILogger<HomeController> logger,IMovieRepository movieRepository,
+            IDataCrudRepository<Movie> DatabaseMovie , ISearchServices<Movie> searchServicesMovie ,
+            ISearchServices<Actor> searchServicesActor , IActorRepository actorRepository
+            )
         {
+            this.DatabaseMovie= DatabaseMovie;
+            this.searchServicesMovie = searchServicesMovie;
+            this.searchServicesActor = searchServicesActor;
+
+            this.actorRepository = actorRepository;
+            this.movieRepository= movieRepository;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
-            var movies = context.Movies.Include(e => e.Category).Include(e => e.Cinema).ToList();
+            var movies = movieRepository.GetMoviesAll().ToList();
+                //context.Movies.Include(e => e.Category).Include(e => e.Cinema).ToList();
 
             return View(movies);
         }
 
         public IActionResult Details(int movieid)
         {
-            var movie = context.Movies.Include(e => e.Category).Include(e => e.Cinema)
-                .Include(e=>e.ActorMovies)
-                .ThenInclude(e=>e.Actor)
-                .ToList().FirstOrDefault(e=>e.Id== movieid);
+            var movie = movieRepository.GetMovieDetails(movieid);
+                //context.Movies.Include(e => e.Category).Include(e => e.Cinema)
+                //.Include(e=>e.ActorMovies)
+                //.ThenInclude(e=>e.Actor)
+                //.ToList().FirstOrDefault(e=>e.Id== movieid);
 
             return View(movie);
         }
@@ -39,25 +56,28 @@ namespace BookingMovies.Controllers
         {
             if(SearchType== "Movies")
             {
-                var movies = context.Movies.Where(e => e.Name.ToLower().Contains(SearchWord.ToLower()))
-                .Include(e => e.Category).Include(e => e.Cinema)
-                .ToList();
-                if (movies.Count == 0)
+                var movies = searchServicesMovie.Search(SearchWord);
+                //    context.Movies.Where(e => e.Name.ToLower().Contains(SearchWord.ToLower()))
+                //.Include(e => e.Category).Include(e => e.Cinema)
+                //.ToList();
+                if (movies.Count== 0)
                 { return RedirectToAction("NotFoundSearch"); }
 
                 return View(movies);
             }
             else if (SearchType == "Actors")
             {
-                List<Actor> Actor = context.Actors.Where(e =>e.FirstName.ToLower()
-                .Contains(SearchWord.ToLower()) || e.LastName.ToLower().Contains(SearchWord.ToLower())
-                || (e.FirstName.ToLower()+" "+ e.LastName.ToLower()).Contains(SearchWord.ToLower())
-                ).ToList();
+                List<Actor> Actor = searchServicesActor.Search(SearchWord);
+                //    context.Actors.Where(e =>e.FirstName.ToLower()
+                //.Contains(SearchWord.ToLower()) || e.LastName.ToLower().Contains(SearchWord.ToLower())
+                //|| (e.FirstName.ToLower()+" "+ e.LastName.ToLower()).Contains(SearchWord.ToLower())
+                //).ToList();
 
                 if(Actor.Count==0)
                 { return RedirectToAction("NotFoundSearch"); }
                 TempData["actors"] = Actor;
-                ViewBag.actormoviesearch = context.ActorMovies.Include(e => e.Actor).Include(e => e.Movie).ToList();
+                ViewBag.actormoviesearch = actorRepository.GetActorsMovies().ToList();
+                    //context.ActorMovies.Include(e => e.Actor).Include(e => e.Movie).ToList();
                 return View(Actor);
             }
             return RedirectToAction("NotFoundSearch");
@@ -71,14 +91,6 @@ namespace BookingMovies.Controllers
 
             return View();
         }
-
-
-
-
-
-
-
-
 
 
         public IActionResult Privacy()
