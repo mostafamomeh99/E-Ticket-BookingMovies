@@ -1,7 +1,6 @@
 ﻿@model BookingMovies.Models.Movie
 
-<h4>Update Movie</h4>
-<hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="UpdateMovie" method="post" enctype="multipart/form-data">
@@ -25,7 +24,7 @@
             <div class="form-group">
                 
                 <label asp-for="ImgUrl" class="control-label text-light fw-bold mt-2"></label>
-                <i class="d-block ">*if no Image choosen ,old Image will apply </i>
+                <i class="d-block text-warning">*if no Image choosen ,old Image will apply </i>
                 <input name="ImgUrl" class="form-control" type="file"/>
             </div>
             <div class="form-group">

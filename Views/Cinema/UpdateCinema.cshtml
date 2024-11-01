@@ -1,7 +1,6 @@
 ﻿@model BookingMovies.Models.Cinema
 
-<h4>Update Cinema</h4>
-<hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="UpdateCinema" asp-controller="Cinema" method="post" enctype="multipart/form-data">
@@ -20,7 +19,7 @@
           
             <div class="form-group">
                 <label asp-for="CinemaLogo" class="control-label text-light fw-bold "></label>
-                <i class="d-block mb-2">*if no file choosen ,old one will apply </i>
+                <i class="d-block mb-2 text-warning">*if no file choosen ,old one will apply </i>
                 <input name="CinemaLogo" class="form-control" type="file" value="@Model.CinemaLogo" />
                 <span asp-validation-for="CinemaLogo" class="text-danger"></span>
             </div>

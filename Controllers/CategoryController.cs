@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingMovies.Controllers
 {
+ 
     public class CategoryController : Controller
     {
         private readonly IDataCrudRepository<Category> dbcategory;

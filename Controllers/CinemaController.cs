@@ -2,6 +2,7 @@
 using BookingMovies.Models;
 using BookingMovies.Repository;
 using BookingMovies.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,12 +39,14 @@ namespace BookingMovies.Controllers
             return View(cinema);
         }
 
-
+        
         public IActionResult AddCinema()
         {
             return View(new Cinema());
         }
         [HttpPost]
+       
+        [ValidateAntiForgeryToken]
         public IActionResult AddCinema(Cinema cinema, IFormFile CinemaLogo)
         {
             ModelState.Remove("CinemaLogo");
@@ -54,7 +57,7 @@ namespace BookingMovies.Controllers
                     cinema.CinemaLogo = Cinemafiles.AddFile(CinemaLogo, "cinemas");
                     DatabaseCinema.Create(cinema);
                     DatabaseCinema.Commit();
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Cinema");
                 }
                 else
                 {
@@ -68,13 +71,15 @@ namespace BookingMovies.Controllers
 
 
 
-
+       
         public IActionResult UpdateCinema(int id)
         {
             var cinema = DatabaseCinema.GetById(id);
             return View(cinema);
         }
         [HttpPost]
+   
+        [ValidateAntiForgeryToken]
         public IActionResult UpdateCinema(Cinema cinema , IFormFile CinemaLogo)
         {
             ModelState.Remove("CinemaLogo");
@@ -88,28 +93,28 @@ namespace BookingMovies.Controllers
                     DatabaseCinema.Update(cinema);
                     DatabaseCinema.Commit();
                  
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Cinema");
                 }
                 else
                 {
                     cinema.CinemaLogo = oldcinema.CinemaLogo;
                     DatabaseCinema.Update(cinema);
                     DatabaseCinema.Commit();
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Cinema");
                 }
 
             }
 
             return View(cinema);
         }
-
+      
         public IActionResult DeleteCinema(int id)
         {
             var cinema = DatabaseCinema.GetById(id);
             Cinemafiles.DeleteFile("cinemas", cinema);
             DatabaseCinema.Delete(cinema);
             DatabaseCinema.Commit();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Cinema");
         }
 
     }

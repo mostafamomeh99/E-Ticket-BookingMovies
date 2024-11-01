@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace BookingMovies.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly IDataCrudRepository<Movie> DatabaseMovie;
@@ -35,18 +36,12 @@ namespace BookingMovies.Controllers
         public IActionResult Index()
         {
             var movies = movieRepository.GetMoviesAll().ToList();
-                //context.Movies.Include(e => e.Category).Include(e => e.Cinema).ToList();
-
             return View(movies);
         }
 
         public IActionResult Details(int movieid)
         {
             var movie = movieRepository.GetMovieDetails(movieid);
-                //context.Movies.Include(e => e.Category).Include(e => e.Cinema)
-                //.Include(e=>e.ActorMovies)
-                //.ThenInclude(e=>e.Actor)
-                //.ToList().FirstOrDefault(e=>e.Id== movieid);
 
             return View(movie);
         }
@@ -57,9 +52,6 @@ namespace BookingMovies.Controllers
             if(SearchType== "Movies")
             {
                 var movies = searchServicesMovie.Search(SearchWord);
-                //    context.Movies.Where(e => e.Name.ToLower().Contains(SearchWord.ToLower()))
-                //.Include(e => e.Category).Include(e => e.Cinema)
-                //.ToList();
                 if (movies.Count== 0)
                 { return RedirectToAction("NotFoundSearch"); }
 
@@ -68,16 +60,11 @@ namespace BookingMovies.Controllers
             else if (SearchType == "Actors")
             {
                 List<Actor> Actor = searchServicesActor.Search(SearchWord);
-                //    context.Actors.Where(e =>e.FirstName.ToLower()
-                //.Contains(SearchWord.ToLower()) || e.LastName.ToLower().Contains(SearchWord.ToLower())
-                //|| (e.FirstName.ToLower()+" "+ e.LastName.ToLower()).Contains(SearchWord.ToLower())
-                //).ToList();
 
                 if(Actor.Count==0)
                 { return RedirectToAction("NotFoundSearch"); }
                 TempData["actors"] = Actor;
                 ViewBag.actormoviesearch = actorRepository.GetActorsMovies().ToList();
-                    //context.ActorMovies.Include(e => e.Actor).Include(e => e.Movie).ToList();
                 return View(Actor);
             }
             return RedirectToAction("NotFoundSearch");

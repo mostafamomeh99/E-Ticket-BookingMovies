@@ -2,12 +2,14 @@
 using BookingMovies.Models;
 using BookingMovies.Repository;
 using BookingMovies.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookingMovies.Controllers
 {
+    
     public class ActorController : Controller
     {
         private readonly IDataCrudRepository<Actor> DatabaseActor;
@@ -28,7 +30,6 @@ namespace BookingMovies.Controllers
            this.ActorFiles = ActorFiles;
         }
 
-        ApplicationDbContext context = new ApplicationDbContext();
         public IActionResult Index(int actorid)
         {
             // to show its movies
@@ -40,6 +41,7 @@ namespace BookingMovies.Controllers
             return View (actor);
         }
 
+ 
 
         public IActionResult AddActor()
         {
@@ -47,6 +49,8 @@ namespace BookingMovies.Controllers
             return View(new Actor());
         }
         [HttpPost]
+   
+        [ValidateAntiForgeryToken]
         public IActionResult AddActor(Actor actor ,List<int> MoviesSelect ,IFormFile ProfilePicture)
         {
             ModelState.Remove("ProfilePicture");
@@ -61,7 +65,7 @@ namespace BookingMovies.Controllers
                     foreach (int i in MoviesSelect)
                     { DatabaseActorMovie.Create(new ActorMovie() { ActorsId= actor.Id,MoviesId=i }); }
                     DatabaseActor.Commit();
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Actor", new { actorid= actor.Id });
 
                 }
                 ModelState.AddModelError(string.Empty, "please Upload Photo");
@@ -73,7 +77,6 @@ namespace BookingMovies.Controllers
         }
 
 
-
         public IActionResult UpdateActor(int id)
         {
             var actor = DatabaseActor.GetById(id);
@@ -82,6 +85,8 @@ namespace BookingMovies.Controllers
             return View(actor);
         }
         [HttpPost]
+      
+        [ValidateAntiForgeryToken]
         public IActionResult UpdateActor(Actor actor, List<int> MoviesSelect, IFormFile ProfilePicture)
         {
             ModelState.Remove("ProfilePicture");
@@ -110,7 +115,7 @@ namespace BookingMovies.Controllers
               
                     }
                     DatabaseActor.Commit();
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Actor", new { actorid = actor.Id });
                 }
                 else 
                 {
@@ -129,7 +134,7 @@ namespace BookingMovies.Controllers
 
                     }
                     DatabaseActor.Commit();
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Actor", new { actorid = actor.Id });
                 }
                
             }

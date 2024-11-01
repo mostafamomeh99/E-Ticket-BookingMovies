@@ -31,6 +31,53 @@
                         <li class="nav-item">
                             <a class="nav-link text-light fw-bold" asp-area="" asp-controller="Cinema" asp-action="Index">Cinemas</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @if(User.IsInRole("Admin"))
+                            {
+                        <div class="dropdown">
+                            <a class="btn btn-dark dropdown-toggle nav-link text-danger fw-bold" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                New Uploads
+                            </a>
+
+                            <ul class="dropdown-menu bg-dark text-light fw-bold" aria-labelledby="dropdownMenuLink">
+                                <li>
+                                    <a class="dropdown-item  text-light fw-bold " href="https://localhost:7045/Actor/AddActor">
+                                  Upload Actor</a></li>
+                                <li>
+                                    <a class="dropdown-item  text-light fw-bold" href="https://localhost:7045/Movie/AddMovie">
+                                        Upload Movie
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-light fw-bold" href="https://localhost:7045/Cinema/AddCinema">
+                                        Upload Cinema
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <li class="nav-item">
+                                <a class="nav-link text-light fw-bold" asp-area="" asp-controller="Account" asp-action="Logout">LogOut</a>
+                            </li>
+                        }
+
+                           <li class="nav-item">
+                                <a class="nav-link text-light fw-bold" asp-area="" asp-controller="Account" asp-action="Logout">LogOut</a>
+                            </li>
+                        }
+
+                     
+                        else
+                        {
+                            
+                             <li class="nav-item">
+                            <a class="nav-link text-light fw-bold" asp-area="" asp-controller="Account" asp-action="Register">SignUp</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-bold" asp-area="" asp-controller="Account" asp-action="Login">LogIn</a>
+                            </li>
+                            
+                        }
                     </ul>
                     <form class="d-flex" asp-action="Search" asp-controller="Home" method="post">
                         <select class="form-select me-2" name="SearchType" id="selectform">

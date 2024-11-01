@@ -1,5 +1,7 @@
 ﻿using BookingMovies.Models;
 using BookingMovies.Repository.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -7,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingMovies.Controllers
 {
+  
     public class MovieController : Controller
     {
         private readonly IMovieRepository movieRepository;
@@ -26,7 +29,6 @@ namespace BookingMovies.Controllers
             this.MovieFiles = MovieFiles;
         }
 
-
         public IActionResult AddMovie()
         {
             ViewBag.CategoryId = DatabaseCategory.GetAll().Select(c => new SelectListItem
@@ -45,6 +47,7 @@ namespace BookingMovies.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult AddMovie(Movie movie , IFormFile ImgUrl)
         {
             ModelState.Remove("ImgUrl");
@@ -104,7 +107,7 @@ namespace BookingMovies.Controllers
 
         }
 
-
+        [HttpGet]
         public IActionResult UpdateMovie(int id)
         {
             var movie = DatabaseMovie.GetById(id);
@@ -127,6 +130,7 @@ namespace BookingMovies.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult UpdateMovie(Movie movie, IFormFile ImgUrl)
         {
 
@@ -187,7 +191,6 @@ namespace BookingMovies.Controllers
                 return View(movie);
             }
         }
-
 
         public IActionResult DeleteMovie(int id)
         {

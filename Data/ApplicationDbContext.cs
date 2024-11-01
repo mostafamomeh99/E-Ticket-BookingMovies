@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using BookingMovies.Models;
 using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using BookingMovies.Models.VIEWModel;
 namespace BookingMovies.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Actor> Actors { get; set; }
         public DbSet<ActorMovie> ActorMovies { get; set; }
@@ -14,19 +16,10 @@ namespace BookingMovies.Data
           : base(options)
         {
         }
-        public ApplicationDbContext()
-   : base()
-        {
-        }
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true).Build();
-
-        //    var connection = builder.GetConnectionString("DefaultConnection");
-        //    optionsBuilder.UseSqlServer(connection);
-        //}
+    
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<ActorMovie>()
                 .HasKey(e => new { e.ActorsId, e.MoviesId });
 
@@ -41,6 +34,8 @@ namespace BookingMovies.Data
             .HasForeignKey(e=>e.MoviesId);
             
         }
+        public DbSet<BookingMovies.Models.VIEWModel.RegisterVm> RegisterVm { get; set; } = default!;
+        public DbSet<BookingMovies.Models.VIEWModel.LoginVm> LoginVm { get; set; } = default!;
 
     }
 }

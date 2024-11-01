@@ -1,0 +1,55 @@
+﻿@model BookingMovies.Models.VIEWModel.RegisterVm
+
+
+<div class="d-flex justify-content-start">
+    <h4 class="text-light">New Account , Or</h4>
+        <a role="button" class="btn btn-danger ms-2" >SingUp With Google</a>
+    <a role="button" class="btn btn-primary ms-2">SingUp With FaceBook</a>
+    </div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="All" style="color:darkorange"></div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label text-light"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" style="color:darkorange"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label text-light"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" style="color:darkorange"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label text-light"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" style="color:darkorange"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label text-light"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" style="color:darkorange" ></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label text-light"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" style="color:darkorange"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="control-label text-light"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" style="color:darkorange"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create New Account" class="btn btn-warning mt-4"  />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -2,7 +2,12 @@ using BookingMovies.Data;
 using BookingMovies.Models;
 using BookingMovies.Repository;
 using BookingMovies.Repository.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
+using System.Text;
 
 namespace BookingMovies
 {
@@ -19,6 +24,9 @@ namespace BookingMovies
                    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
                    );
 
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>(); 
+
             builder.Services.AddScoped<IDataCrudRepository<Category>, DataCrudRepository<Category>>();
             builder.Services.AddScoped<IDataCrudRepository<Cinema>, DataCrudRepository<Cinema>>();
             builder.Services.AddScoped<IDataCrudRepository<Actor>, DataCrudRepository<Actor>>();
@@ -33,6 +41,11 @@ namespace BookingMovies
             builder.Services.AddScoped<IFileServices<Actor>, ActorRepository>();
             builder.Services.AddScoped<IFileServices<Cinema>, CinemaRepository>();
             builder.Services.AddScoped<IFileServices<Movie>, MovieRepository>();
+            builder.Services.AddTransient<IAccountRepository, AccountRepositry>();
+           
+
+           
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -47,8 +60,11 @@ namespace BookingMovies
             app.UseStaticFiles();
 
             app.UseRouting();
+         
 
+            app.UseAuthentication();
             app.UseAuthorization();
+           
 
             app.MapControllerRoute(
                 name: "default",

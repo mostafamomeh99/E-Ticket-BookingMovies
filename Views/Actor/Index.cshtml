@@ -4,7 +4,7 @@
 <div class="card" style="width: 50rem;">
     <div class="d-flex mt-2">
             <img src="~/images/cast/@actorx.ProfilePicture" class="card-img-top"
- id="actorphoto"
+             id="actorphoto"
     alt="...">
         <p class="ms-2 card-text align-self-center fw-bold"
                style="font-size:25px;">@actorx.FirstName @actorx.LastName </p>
@@ -19,6 +19,16 @@
                 style="text-decoration:none;" >@actor.Movie.Name</a>
             </p>
         }
+            @if (User.IsInRole("Admin"))
+            {
+            <div class="d-flex mt-4">
+                <a href="https://localhost:7045/Actor/UpdateActor?id=@actorx.Id" class="btn btn-warning me-2 ">Update</a>
+
+                <a href="https://localhost:7045/Actor/DeleteActor?id=@actorx.Id" class="btn btn-danger">Delete</a>
+
+            </div>
+            }
+
         </div>
     
 

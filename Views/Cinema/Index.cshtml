@@ -14,6 +14,18 @@
                         </i> All Movies
                     </a>
                 </td>
+                @if (User.IsInRole("Admin")){
+                <td> 
+                    <div class="d-flex">
+                        <a href="https://localhost:7045/Cinema/UpdateCinema?id=@item.Id" class="btn btn-warning me-2 ">Update</a>
+
+                        <a href="https://localhost:7045/Cinema/DeleteCinema?id=@item.Id" class="btn btn-danger">Delete</a>
+
+
+                    </div>
+                    
+                </td>
+                }
             </tr>
         }
     </tbody>
